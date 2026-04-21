@@ -11,11 +11,10 @@ stages:
   - name: build
     displayName: 构建 APK
     steps:
-      - step: build@gradle
-        name: build_gradle
-        displayName: Gradle 构建
-        jdkVersion: '17'               # 指定 JDK 17 满足插件要求
-        gradleVersion: '8.13'          # 可选，保持与之前一致
+      - step: build@custom
+        name: custom_build
+        displayName: 自定义构建
+        image: openjdk:17-jdk
         commands:
           - chmod +x gradlew
           - ./gradlew assembleDebug
