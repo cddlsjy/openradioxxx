@@ -1,5 +1,6 @@
 package com.yuriy.openradio.shared.view.list
 
+import android.content.Context
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -29,18 +30,18 @@ open class MediaItemsAdapter {
     var activeItemId: Int = -1
     var parentId: String = ""
 
-    fun getItem(position: Int): MediaItem? = null
+    open fun getItem(position: Int): MediaItem? = null
 
-    fun updateImage(context: android.content.Context, metadata: MediaMetadata, imageView: ImageView) {
+    open fun updateImage(context: Context, metadata: MediaMetadata, imageView: ImageView) {
     }
 
-    fun updateBitrateView(bitrate: Int, bitrateView: TextView, isPlayable: Boolean) {
+    open fun updateBitrateView(bitrate: Int, bitrateView: TextView, isPlayable: Boolean) {
     }
 
-    fun handleNameAndDescriptionView(nameView: TextView, descriptionView: TextView, metadata: MediaMetadata, parentId: String) {
+    open fun handleNameAndDescriptionView(nameView: TextView, descriptionView: TextView, metadata: MediaMetadata, parentId: String) {
     }
 
-    fun handleFavoriteAction(
+    open fun handleFavoriteAction(
         checkBox: CheckBox,
         mediaId: String,
         metadata: MediaMetadata,
@@ -48,7 +49,28 @@ open class MediaItemsAdapter {
     ) {
     }
 
-    fun onViewRecycled(holder: MediaItemViewHolder) {
+    open fun onViewRecycled(holder: MediaItemViewHolder) {
+    }
+
+    open fun onCreateViewHolder(parent: Any, viewType: Int): MediaItemViewHolder {
+        return MediaItemViewHolder(
+            View(parent as Context),
+            View(parent),
+            TextView(parent),
+            TextView(parent),
+            ImageView(parent),
+            CheckBox(parent),
+            TextView(parent),
+            null,
+            View(parent)
+        )
+    }
+
+    open fun onBindViewHolder(holder: MediaItemViewHolder, position: Int) {
+    }
+
+    open fun getItemCount(): Int {
+        return 0
     }
 
     var listener: OnItemSelectedListener? = null

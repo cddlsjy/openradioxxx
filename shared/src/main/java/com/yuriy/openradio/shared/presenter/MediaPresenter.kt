@@ -14,7 +14,7 @@ class MediaPresenter {
     fun init(
         activity: Context,
         mainView: View,
-        savedInstanceState: Bundle,
+        savedInstanceState: Bundle?,
         listView: View,
         currentRadioStationView: View,
         adapter: Any,
