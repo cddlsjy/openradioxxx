@@ -1,0 +1,55 @@
+# .gitee-ci.yml
+
+# 定义流水线的阶段
+stages:
+  - build
+  - upload
+
+# 环境变量
+variables:
+  JAVA_HOME: "/usr/lib/jvm/java-17-openjdk-amd64"
+
+# 1. 构建阶段
+build:
+  stage: build
+  script:
+    # 给 gradlew 添加执行权限
+    - chmod +x gradlew
+    # 执行 Debug 构建，并传递 JAVA_HOME 环境变量
+    - ./gradlew assembleDebug -Dorg.gradle.java.home=$JAVA_HOME
+  artifacts:
+    # 声明构建产物，供后续阶段使用
+    paths:
+      - app/build/outputs/apk/debug/*.apk
+    expire_in: 1 week  # 产物保留一周
+
+# 2. 上传阶段（使用 Gitee API）
+upload:
+  stage: upload
+  script:
+    # 1. 查找 APK 文件
+    - APK_PATH=$(find app/build/outputs -name "*.apk" -type f | head -n 1)
+    - APK_NAME=$(basename $APK_PATH)
+    - echo "Found APK at $APK_PATH"
+
+    # 2. 准备上传参数
+    - OWNER="你的Gitee用户名"  # 替换为你的用户名
+    - REPO="你的APK仓库名"     # 替换为存放APK的仓库名
+    - BRANCH="main"           # 目标分支
+    - API_URL="https://gitee.com/api/v5/repos/${OWNER}/${REPO}/contents/${APK_NAME}"
+    - CONTENT_BASE64=$(base64 -w 0 $APK_PATH)
+
+    # 3. 调用 Gitee API 上传文件
+    - |
+      curl -X POST "$API_URL" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"access_token\": \"${GITEE_TOKEN}\",
+          \"message\": \"Upload APK from CI: ${APK_NAME}\",
+          \"content\": \"${CONTENT_BASE64}\",
+          \"branch\": \"${BRANCH}\"
+        }"
+  dependencies:
+    - build  # 确保此阶段在 build 成功后执行
+  only:
+    - main  # 仅在 main 分支有推送时执行
