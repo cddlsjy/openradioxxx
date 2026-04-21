@@ -11,13 +11,15 @@ stages:
   - name: build
     displayName: 构建 APK
     steps:
+      # 使用自定义容器，直接指定 JDK 17
       - step: build@custom
-        name: custom_build
-        displayName: 自定义构建
+        name: build_with_jdk17
+        displayName: 使用 JDK 17 构建
         image: openjdk:17-jdk
         commands:
           - chmod +x gradlew
           - ./gradlew assembleDebug
+      # 上传 APK
       - step: publish@build_artifacts
         name: publish_apk
         displayName: 上传 APK
