@@ -1,7 +1,7 @@
 version: '1.0'
 name: master-pipeline
 displayName: 主分支流水线
-trigger:
+triggers:
   push:
     branches:
       include:
@@ -14,7 +14,8 @@ stages:
       - step: build@gradle
         name: build_gradle
         displayName: Gradle 构建
-        gradleVersion: 7.6
+        jdkVersion: '17'               # 指定 JDK 17 满足插件要求
+        gradleVersion: '8.13'          # 可选，保持与之前一致
         commands:
           - chmod +x gradlew
           - ./gradlew assembleDebug
